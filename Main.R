@@ -1,6 +1,10 @@
 library(dplyr)
 library(quantmod)
 library(stats)
+library(ggplot2)
+library(ggpubr)
+library(plotly)
+
 
 #letoltendo tickerek
 ticker_list <-
@@ -57,3 +61,19 @@ names(predicted_logreturns)[1:length(predicted_logreturns)] <- ticker_list[2:len
   #valos hozamok-prediktalt hozamok
   abnormal_returns <- cbind(test_actual_return$date, test_actual_return_only-predicted_logreturns)
   
+#kumulált abnormális hozamok kiszámítása és ábrázolása
+cum_abnormal_returns<-lapply(abnormal_returns[,2:length(ticker_list)],cumsum)
+cum_abnormal_returns <-cbind(abnormal_returns[,1],data.frame(cum_abnormal_returns))
+names(cum_abnormal_returns)<-c("Date","HSBC", "BCS", "RBS", "RDSA", "BP", "EZJ", "BATS")
+p1 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=HSBC,x=Date))
+p2 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=BCS, x=Date))
+p3 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=RBS, x= Date))
+p4 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=RDSA, x=Date))
+p5 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=BP, x=Date))
+p6 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=EZJ, x= Date))
+p7 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=BATS, x=Date))
+gridExtra::grid.arrange(p1,p2,p3,p4,p5,p6,p7,nrow=4, ncol=2, top = "Kumulált abnormális hozamok")
+
+#statistical test
+x_star<-data.frame(V1=c(rep(1,length(EUFN.Adjusted))),EUFN.Adjusted)
+
