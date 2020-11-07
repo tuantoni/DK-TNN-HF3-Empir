@@ -4,7 +4,8 @@ library(stats)
 library(ggplot2)
 library(ggpubr)
 library(plotly)
-
+library(data.table)
+library(matlib)
 
 #letoltendo tickerek
 ticker_list <-
@@ -75,5 +76,37 @@ p7 <- ggplot(cum_abnormal_returns) + geom_line(aes(y=BATS, x=Date))
 gridExtra::grid.arrange(p1,p2,p3,p4,p5,p6,p7,nrow=4, ncol=2, top = "Kumulált abnormális hozamok")
 
 #statistical test
-x_star<-data.frame(V1=c(rep(1,length(EUFN.Adjusted))),EUFN.Adjusted)
+x_star<-as.matrix(data.frame(V1=c(rep(1,length(EUFN.Adjusted))),EUFN.Adjusted))
+
+eps_hat<-function(ticker){
+  event_study_df[,ticker+2]*linear_Models[[ticker]]$coefficients[1]-
+    event_study_df$EUFN.Adjusted*linear_Models[[ticker]]$coefficients[2]
+}
+
+est_eps<-lapply(1:7,eps_hat)
+
+test<-function(n){
+  
+epshat<-matrix(unlist(est_eps[n]), ncol=1)
+var_eps_hat<-drop((t(epshat)%*%epshat)/(length(epshat)-2))
+munit<-matrix(0,nrow(x_star),nrow(x_star))
+diag(munit)<-1
+X<-as.matrix(data.frame(V1=c(rep(1,length(event_study_df[,2]))),event_study_df$EUFN.Adjusted))
+trimat<-matrix(1,ncol=nrow(x_star),nrow=nrow(x_star))
+trimat[lower.tri(trimat)] <- 0
+V<-munit*var_eps_hat+((x_star%*%solve(t(X)%*%X))%*%t(x_star))*var_eps_hat
+Var_Car<-vector()
+for(i in 1:nrow(x_star)){
+ Var_Car[i]<-(t(trimat[,i])%*%V)%*%trimat[,i]
+}
+
+return(Var_Car)
+
+}
+
+hip<-function(n){
+tick_hip<-data.frame(Date=cum_abnormal_returns[,1],CAR=cum_abnormal_returns[,n],Var_Car=test(n-1), SCAR=cum_abnormal_returns[,n]/sqrt(test(n-1)))
+tick_hip<-cbind(tick_hip,p_value=1-pt(q=abs(tick_hip$SCAR),df=length(event_study_df[,n+1])))
+}
+
 
