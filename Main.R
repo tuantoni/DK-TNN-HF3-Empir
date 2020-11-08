@@ -58,9 +58,11 @@ predicted_logreturns <- mapply(predict, linear_ModelswoMean, data_output_test_xy
 names(predicted_logreturns)[1:length(predicted_logreturns)] <- ticker_list[2:length(ticker_list)]
 
 #abnormalis hozamok kiszamitasa és ábrázolása
+
   #teszt eseményablak valos hozamainak egy data frambe rendezese
   test_actual_return <- purrr::reduce(data_output_test_y, full_join, by="date")
   test_actual_return_only <- test_actual_return[2:length(ticker_list)]
+  
   #valos hozamok-prediktalt hozamok és azok átlaga
   abnormal_returns <- cbind(test_actual_return$date, test_actual_return_only-predicted_logreturns)
   names(abnormal_returns)<-c("Date","HSBC", "BCS", "RBS", "RDSA", "BP", "EZJ", "BATS")
@@ -148,7 +150,7 @@ tick_hip<-data.frame(Date=cum_abnormal_returns[,1],CAR=cum_abnormal_returns[,n],
 tick_hip<-cbind(tick_hip,p_value=1-pt(q=abs(tick_hip$SCAR),df=length(event_study_df[,n+1])))
 }
 
-#hipotézisvizsgálathoz a vállalatok külön-külön
+#hipotézisvizsgálat a vállalatokra külön-külön, illetve az átlagra is
 hsbc<-hip(2)
 bcs<-hip(3)
 rbs<-hip(4)
