@@ -1,3 +1,13 @@
+install.packages("dplyr")
+install.packages("quantmod")
+install.packages("stats")
+install.packages("ggplot2")
+install.packages("ggpubr")
+install.packages("plotly")
+install.packages("data.table")
+install.packages("matlib")
+
+
 library(dplyr)
 library(quantmod)
 library(stats)
