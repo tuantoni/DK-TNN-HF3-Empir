@@ -72,6 +72,7 @@ names(predicted_logreturns)[1:length(predicted_logreturns)] <- ticker_list[2:len
   #teszt eseményablak valos hozamainak egy data frambe rendezese
   test_actual_return <- purrr::reduce(data_output_test_y, full_join, by="date")
   test_actual_return_only <- test_actual_return[2:length(ticker_list)]
+  names(test_actual_return_only)<-c("HSBC", "BCS", "RBS", "RDSA", "BP", "EZJ", "BATS")
   
   #valos hozamok-prediktalt hozamok és azok átlaga
   abnormal_returns <- cbind(test_actual_return$date, test_actual_return_only-predicted_logreturns)
@@ -131,7 +132,7 @@ gridExtra::grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,nrow=4, ncol=2, top = "Kumulált
 x_star<-as.matrix(data.frame(V1=c(rep(1,length(EUFN.Adjusted))),EUFN.Adjusted))
 
 eps_hat<-function(ticker){
-  event_study_df[,ticker+2]*linear_Models[[ticker]]$coefficients[1]-
+  event_study_df[,ticker+2]-linear_Models[[ticker]]$coefficients[1]-
     event_study_df$EUFN.Adjusted*linear_Models[[ticker]]$coefficients[2]
 }
 
@@ -171,3 +172,67 @@ bats<-hip(8)
 mean<-hip(9)
 
 
+#A következőek mind az interpretációhoz kell!
+
+#együtthatók
+alfa<-vector()
+for (i in 1:8){
+  alfa[i]<-linear_Models[[i]]$coefficients[1]
+}
+
+beta<-vector()
+for (i in 1:8){
+  beta[i]<-linear_Models[[i]]$coefficients[2]
+}
+
+omega<-rbind(alfa,beta)
+colnames(omega)<-c("HSBC", "BCS", "RBS", "RDSA", "BP", "EZJ", "BATS", "Mean")
+
+#külön-külön ábrák cégekre
+names(test_actual_return)<-c("Date","HSBC", "BCS", "RBS", "RDSA", "BP", "EZJ", "BATS")
+hsbc_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=HSBC,x=Date, color="Abnormal Returns"))+
+  geom_line(data=test_actual_return,aes(y=HSBC,x=Date,color="Actual Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=HSBC,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=HSBC,x=Date,label=scales::percent(HSBC)), color="black", size=3)+
+  geom_text(data=test_actual_return,aes(y=HSBC,x=Date,label=scales::percent(HSBC)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("HSBC returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+bcs_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=BCS,x=Date, color="Abnormal Returns"))+
+  geom_line(data=test_actual_return,aes(y=BCS,x=Date,color="Actual Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=BCS,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=BCS,x=Date,label=scales::percent(BCS)), color="black", size=3)+
+  geom_text(data=test_actual_return,aes(y=BCS,x=Date,label=scales::percent(BCS)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("BCS returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+rbs_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=RBS,x=Date, color="Abnormal Returns"))+
+  geom_line(data=test_actual_return,aes(y=RBS,x=Date,color="Actual Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=RBS,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=RBS,x=Date,label=scales::percent(RBS)), color="black", size=3)+
+  geom_text(data=test_actual_return,aes(y=RBS,x=Date,label=scales::percent(RBS)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("RBS returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+rds_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=RDSA,x=Date, color="Abnormal Returns"))+
+  geom_line(data=test_actual_return,aes(y=RDSA,x=Date,color="Actual Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=RDSA,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=RDSA,x=Date,label=scales::percent(RDSA)), color="black", size=3)+
+  geom_text(data=test_actual_return,aes(y=RDSA,x=Date,label=scales::percent(RDSA)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("RDS-A returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+bp_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=BP,x=Date, color="Abnormal Returns"))+
+  geom_line(data=test_actual_return,aes(y=BP,x=Date,color="Actual Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=BP,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=BP,x=Date,label=scales::percent(BP)), color="black", size=3)+
+  geom_text(data=test_actual_return,aes(y=BP,x=Date,label=scales::percent(BP)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("BP returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+ezj_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=EZJ,x=Date, color="Abnormal Returns"))+
+  geom_line(data=test_actual_return,aes(y=EZJ,x=Date,color="Actual Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=EZJ,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=EZJ,x=Date,label=scales::percent(EZJ)), color="black", size=3)+
+  geom_text(data=test_actual_return,aes(y=EZJ,x=Date,label=scales::percent(EZJ)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("EZJ returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+bats_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=BATS,x=Date, color="Abnormal Returns"))+
+  geom_line(data=test_actual_return,aes(y=BATS,x=Date,color="Actual Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=BATS,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=BATS,x=Date,label=scales::percent(BATS)), color="black", size=3)+
+  geom_text(data=test_actual_return,aes(y=BATS,x=Date,label=scales::percent(BATS)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("BATS returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+mean_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=Mean,x=Date, color="Abnormal Returns"))+
+  geom_bar(data=cum_abnormal_returns,aes(y=Mean,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+  geom_text(data=abnormal_returns,aes(y=Mean,x=Date,label=scales::percent(Mean)), color="black", size=3)+
+  scale_y_continuous(labels = scales::percent)+ggtitle("Mean abnormal returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
