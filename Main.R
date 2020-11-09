@@ -190,49 +190,26 @@ colnames(omega)<-c("HSBC", "BCS", "RBS", "RDSA", "BP", "EZJ", "BATS", "Mean")
 
 #külön-külön ábrák cégekre
 names(test_actual_return)<-c("Date","HSBC", "BCS", "RBS", "RDSA", "BP", "EZJ", "BATS")
-hsbc_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=HSBC,x=Date, color="Abnormal Returns"))+
-  geom_line(data=test_actual_return,aes(y=HSBC,x=Date,color="Actual Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=HSBC,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=HSBC,x=Date,label=scales::percent(HSBC)), color="black", size=3)+
-  geom_text(data=test_actual_return,aes(y=HSBC,x=Date,label=scales::percent(HSBC)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("HSBC returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
-bcs_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=BCS,x=Date, color="Abnormal Returns"))+
-  geom_line(data=test_actual_return,aes(y=BCS,x=Date,color="Actual Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=BCS,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=BCS,x=Date,label=scales::percent(BCS)), color="black", size=3)+
-  geom_text(data=test_actual_return,aes(y=BCS,x=Date,label=scales::percent(BCS)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("BCS returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
-rbs_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=RBS,x=Date, color="Abnormal Returns"))+
-  geom_line(data=test_actual_return,aes(y=RBS,x=Date,color="Actual Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=RBS,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=RBS,x=Date,label=scales::percent(RBS)), color="black", size=3)+
-  geom_text(data=test_actual_return,aes(y=RBS,x=Date,label=scales::percent(RBS)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("RBS returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
-rds_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=RDSA,x=Date, color="Abnormal Returns"))+
-  geom_line(data=test_actual_return,aes(y=RDSA,x=Date,color="Actual Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=RDSA,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=RDSA,x=Date,label=scales::percent(RDSA)), color="black", size=3)+
-  geom_text(data=test_actual_return,aes(y=RDSA,x=Date,label=scales::percent(RDSA)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("RDS-A returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
-bp_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=BP,x=Date, color="Abnormal Returns"))+
-  geom_line(data=test_actual_return,aes(y=BP,x=Date,color="Actual Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=BP,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=BP,x=Date,label=scales::percent(BP)), color="black", size=3)+
-  geom_text(data=test_actual_return,aes(y=BP,x=Date,label=scales::percent(BP)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("BP returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
-ezj_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=EZJ,x=Date, color="Abnormal Returns"))+
-  geom_line(data=test_actual_return,aes(y=EZJ,x=Date,color="Actual Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=EZJ,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=EZJ,x=Date,label=scales::percent(EZJ)), color="black", size=3)+
-  geom_text(data=test_actual_return,aes(y=EZJ,x=Date,label=scales::percent(EZJ)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("EZJ returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
-bats_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=BATS,x=Date, color="Abnormal Returns"))+
-  geom_line(data=test_actual_return,aes(y=BATS,x=Date,color="Actual Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=BATS,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=BATS,x=Date,label=scales::percent(BATS)), color="black", size=3)+
-  geom_text(data=test_actual_return,aes(y=BATS,x=Date,label=scales::percent(BATS)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("BATS returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
-mean_p<-ggplot() + geom_line(data=abnormal_returns,aes(y=Mean,x=Date, color="Abnormal Returns"))+
-  geom_bar(data=cum_abnormal_returns,aes(y=Mean,x=Date, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
-  geom_text(data=abnormal_returns,aes(y=Mean,x=Date,label=scales::percent(Mean)), color="black", size=3)+
-  scale_y_continuous(labels = scales::percent)+ggtitle("Mean abnormal returns during the 2016.06.23-2016.06.30")+labs(x=NULL, y=NULL)
+
+ggfun<-function(x.var, y.var,t,c="black",s=3){
+  x.var<-enquo(x.var)
+  y.var<-enquo(y.var)
+  ggp<-ggplot() + geom_line(data=abnormal_returns,aes(y= !! y.var,x= !! x.var, color="Abnormal Returns"))+
+    geom_line(data=test_actual_return,aes(y=!! y.var,x= !! x.var,color="Actual Returns"))+
+    geom_bar(data=cum_abnormal_returns,aes(y= !! y.var,x= !! x.var, color="Cumulative Abnormal Returns"),stat="identity", alpha=0.4)+
+    geom_text(data=abnormal_returns,aes(y= !! y.var,x= !! x.var,label=scales::percent(!! y.var)), color=c, size=s)+
+    geom_text(data=test_actual_return,aes(y= !! y.var,x= !! x.var,label=scales::percent( !! y.var)), color=c, size=s)+
+    scale_y_continuous(labels = scales::percent)+
+    labs(x=NULL, y=NULL, title=paste(t,"returns during the 2016.06.23-2016.06.30"))+
+    theme(legend.position="bottom", legend.title=element_blank())
+  return(ggp)
+  }
+ggfun(x.var=Date,y.var=HSBC, t="HSBC")
+ggfun(x.var=Date,y.var=BCS, t="BCS")
+ggfun(x.var=Date,y.var=RBS, t="RBS")
+ggfun(x.var=Date,y.var=RDSA, t="RDS-A")
+ggfun(x.var=Date,y.var=BP, t="BP")
+ggfun(x.var=Date,y.var=EZJ, t="EZJ")
+ggfun(x.var=Date,y.var=BATS, t="BATS")
+
+
